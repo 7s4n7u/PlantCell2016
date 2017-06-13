@@ -1,0 +1,46 @@
+#@author Luca Santuari
+#@mail luca.santuari@wur.nl
+#@group Plant Developmental Biology
+#@university Wageningen University
+
+#Copyright (C) 2016  Luca Santuari
+
+#This program is free software: you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#(at your option) any later version.
+
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+
+#You should have received a copy of the GNU General Public License
+#along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#Pooling PLT2 IP1 and IP2
+cat IP1/PLT2_IP1.rmdup.csar.gz IP2/PLT2_IP2.rmdup.csar.gz > IP1_IP2/PLT2_IP1_IP2.pooled.rmdup.csar.gz
+gzcat < PLT2_IP1_IP2.pooled.rmdup.csar.gz | sort -k4,5 -n -r | uniq | gzip -c > PLT2_IP1_IP2.rmdup.csar.gz
+gzcat IP1/PLT2_IP1.rmdup.tagAlign.gz IP2/PLT2_IP2.rmdup.tagAlign.gz | sort -k4,5 -n -r | uniq | gzip -c > IP1_IP2_pooled/PLT2_IP1_IP2_pooled.rmdup.tagAlign.gz
+
+
+#Running spp
+
+#IP1 and IP2
+
+Rscript phantompeakqualtools/run_spp.R \
+-c=IP1_IP2_pooled/PLT2_IP1_IP2_pooled.rmdup.tagAlign.gz \
+-i=Input/PLT2_Input.rmdup.tagAlign.gz \
+-fdr=0.05 \
+-odir=PLT2/XSQ/IP1/phantompeakqualtools \
+-savr \
+-savp=PLT2_IP1_IP2_pooled.cross_correlation.pdf \
+-savd -rf -p=8 -savn -savr -npeak=20000 -out=results
+
+#BBM
+
+Rscript phantompeakqualtools/run_spp.R \
+-c=BBM/BBM_adaprm.tagAlign.gz \
+-i=NLS/NLS_adaprm.tagAlign.gz \
+-fdr=0.05 \
+-odir=BBM -savr -savp -savd -rf -p=8
